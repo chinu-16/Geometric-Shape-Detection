@@ -53,39 +53,39 @@ GeometricShapeDetection/
 
 ## 🚀 How to Run
 
-# 1. Clone the Repository
+1. Clone the Repository
 git clone https://github.com/yourusername/GeometricShapeDetection.git
 cd GeometricShapeDetection
 
-# 2. Create Virtual Environment
+2. Create Virtual Environment
 python -m venv venv
 
-# 3. Activate Virtual Environment (Windows)
+3. Activate Virtual Environment (Windows)
 venv\Scripts\activate
 
-# (For macOS/Linux users use this instead)
-# source venv/bin/activate
+(For macOS/Linux users use this instead)
+ source venv/bin/activate
 
-# 4. Install Required Packages
+4. Install Required Packages
 pip install -r requirements.txt
 
-# 5. Generate Synthetic Dataset
+5. Generate Synthetic Dataset
 python generation.py
 
-# 6. Train the CNN Model
+6. Train the CNN Model
 python model_training.py
 
-# 7. Run Prediction on a Test Image
+7. Run Prediction on a Test Image
 python predict.py --image test_image_3.png
-# (Replace test_image_3.png with your test image)
+ (Replace test_image_3.png with your test image)
 
-# 8. Run Real-Time Shape Detection using Webcam
+8. Run Real-Time Shape Detection using Webcam
 python real_time_detection.py
 
-# 9. Launch Flask Web App
+9. Launch Flask Web App
 python web_app.py
-# Visit http://127.0.0.1:5000 in your browser
+ Visit http://127.0.0.1:5000 in your browser
 
-# (Optional) Deactivate virtual environment when done
+(Optional) Deactivate virtual environment when done
 deactivate
 
