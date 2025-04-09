@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            padding: 2rem;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .upload-box {
+            border: 2px dashed #aaa;
+            padding: 2rem;
+            border-radius: 12px;
+            background-color: #fff;
+            cursor: pointer;
+            margin: auto;
+            max-width: 400px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.7rem 2rem;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #preview {
+            margin-top: 1rem;
+            max-width: 300px;
+        }
+
+        #result {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            color: #2b9348;
+        }
+
+        #error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload an Image for Shape Detection</h1>
+
+    <label class="upload-box" id="drop-area">
+        <p>Click to select or drag an image here</p>
+        <input type="file" name="file" id="fileInput" accept="image/*">
+        <img id="preview" src="" alt="Image preview" style="display: none;" />
+    </label>
+
+    <button id="uploadBtn">Upload</button>
+
+    <p id="result"></p>
+    <p id="error"></p>
+
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const preview = document.getElementById("preview");
+        const result = document.getElementById("result");
+        const error = document.getElementById("error");
+        const dropArea = document.getElementById("drop-area");
+
+        // File preview
+        fileInput.addEventListener("change", function () {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop
+        dropArea.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = "#007bff";
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.style.borderColor = "#aaa";
+        });
+
+        dropArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = "#aaa";
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event("change"));
+            }
+        });
+
+        // Upload and predict
+        uploadBtn.onclick = async function () {
+            result.textContent = "";
+            error.textContent = "";
+
+            if (fileInput.files.length === 0) {
+                error.textContent = "Please select an image file first.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = "Detecting...";
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    result.textContent = "✅ Detected Shape: " + data.shape;
+                } else {
+                    error.textContent = data.error || "Prediction failed.";
+                }
+            } catch (err) {
+                error.textContent = "An error occurred. Try again.";
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = "Upload";
+            }
+        };
+    </script>
+</body>
+</html>
